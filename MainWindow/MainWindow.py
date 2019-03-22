@@ -1,7 +1,6 @@
 import wx
 
-from Pages.Today import Today
-from Pages.History import History
+from Pages import Today, History
 
 class MainWindow(wx.Frame):
     def __init__(self, *args, **kwargs):
@@ -18,6 +17,9 @@ class MainWindow(wx.Frame):
         self.nb.AddPage(historyPage, "歷史資料")
 
         # 外觀設置
-        self.SetSize((600, 600))
-        # self.SetTitle("Lotto1224")
-        # self.Centre()
+        self.SetSize((800, 600))
+        self.SetTitle("Lotto1224")
+        self.Centre()
+
+        todayPage.fetchData()
+        todayPage.showResult()

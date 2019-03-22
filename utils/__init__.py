@@ -1,5 +1,3 @@
 from .analysis import analysis
-
-__all__ = [
-    analysis
-]
+from .oddAndEven import oddAndEven
+from .smallAndLarge import smallAndLarge
