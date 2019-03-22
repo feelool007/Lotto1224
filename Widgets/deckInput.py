@@ -1,9 +1,9 @@
 import wx
 
-DECK = [
-    "02", "03", "05", "06", "07", "10",
-    "12", "15", "16", "17", "20", "23"
-]
+try:
+    from .deck import DECK
+except ImportError:
+    DECK = []
 
 class DeckInput(wx.Panel):
     def __init__(self, parent):
