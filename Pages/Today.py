@@ -37,8 +37,10 @@ class Today(wx.Panel):
                 continue
             else:
                 noResultCount = 0
-            count = analysis(result[:12], self.deck)
-            result.append(count)
+            oddEven = oddAndEven(result[:12])
+            smallLarge = smallAndLarge(result[:12])
+            result.append(oddEven)
+            result.append(smallLarge)
             dbHandler.insert(result)
             radNo += 1
 

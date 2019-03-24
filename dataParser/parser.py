@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
+from utils import parseInt
+
 url = "http://www.taiwanlottery.com.tw/lotto/Lotto1224/history.aspx"
 
 class Parser(object):
@@ -36,7 +38,16 @@ class Parser(object):
         for i in range(12):
             number = resultByOrder.find_all(id="Lotto1224Control_history_dlQuery_No%s_0" % (i + 1))[1].text
             result.append(number)
+        firstPrize = parseInt(soup.find(id="Lotto1224Control_history_dlQuery_Lotto1224_CategA2_0").text)
+        secondPrize = parseInt(soup.find(id="Lotto1224Control_history_dlQuery_Lotto1224_CategB2_0").text)
+        thirdPrize = parseInt(soup.find(id="Lotto1224Control_history_dlQuery_Lotto1224_CategC2_0").text)
+        forthPrize = parseInt(soup.find(id="Lotto1224Control_history_dlQuery_Lotto1224_CategD2_0").text)
         result.append(radNo)
         result.append(date)
+        result.append(firstPrize)
+        result.append(secondPrize)
+        result.append(thirdPrize)
+        result.append(forthPrize)
         print("%s parse successfully." %radNo)
+
         return result

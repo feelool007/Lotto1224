@@ -12,21 +12,27 @@ class History(wx.Panel):
         self.headers = [
             "id", "數字01", "數字02", "數字03", "數字04", "數字05", "數字06",
             "數字07", "數字08", "數字09", "數字10", "數字11", "數字12", "期號",
-            "日期", "對中數量"
+            "日期", "頭獎注數", "貳獎注數", "參獎注數", "肆獎注數", "單雙", "大小",
+            "對中數量"
         ]
+        self.tableCols = len(self.headers)
+        self.tableRows = 0
+        self.history = pd.DataFrame([], columns=self.headers)
         self.deckInput = DeckInput(self)
         self.deck = self.deckInput.input.GetValue().split(",")
         self.sortAscending = False
         self.sortIx = -1
+        self._table = -1
         self.setupUi()
 
     def getHistoyData(self):
         db = DBHandler()
         db.getAll()
-        self.history = pd.DataFrame.from_records(db.result, columns=self.headers)
+        self.history = pd.DataFrame.from_records(db.result)
+        self.history["對中數量"] = 0
+        self.history.columns = self.headers
         # df.shape: (row, col)
-        self.tableRows, self.tableCols = self.history.shape
-        self.analysis()
+        self.tableRows = self.history.shape[0]
 
     def analysis(self):
         counts = [
@@ -36,7 +42,6 @@ class History(wx.Panel):
             ) for i in range(self.tableRows)
         ]
         self.history["對中數量"] = counts
-        self.tableRows, self.tableCols = self.history.shape
 
     def setValue(self):
         for i, h in enumerate(self.headers):
@@ -49,7 +54,13 @@ class History(wx.Panel):
                 self.grid.SetReadOnly(i, j)
 
     def onGo(self, event):
+        try:
+            self.grid.DeleteRows(numRows=self.tableRows)
+        except:
+            pass
         self.deck = self.deckInput.input.GetValue().split(",")
+        self.getHistoyData()
+        self.grid.AppendRows(numRows=self.tableRows)
         self.analysis()
         self.setValue()
 
@@ -62,18 +73,18 @@ class History(wx.Panel):
         self.sortAscending = not self.sortAscending
         self.sortIx = event.Col
 
-    def setupUi(self):
-        self.getHistoyData()
+    def drawTable(self):
+        self.setValue()
 
+    def setupUi(self):
         self.sizer = wx.BoxSizer(wx.VERTICAL)
 
+        self.deckInput.go.Bind(wx.EVT_BUTTON, self.onGo)
+        self.sizer.Add(self.deckInput, 0, wx.EXPAND)
         self.grid = wx.grid.Grid(self, -1)
         self.grid.CreateGrid(self.tableRows, self.tableCols)
         self.grid.Bind(wx.grid.EVT_GRID_COL_SORT, self.onSort)
+        self.sizer.Add(self.grid, 1, wx.EXPAND)
         self.setValue()
 
-        self.deckInput.go.Bind(wx.EVT_BUTTON, self.onGo)
-
-        self.sizer.Add(self.deckInput, 0, wx.EXPAND)
-        self.sizer.Add(self.grid, 1, wx.EXPAND)
         self.SetSizer(self.sizer)

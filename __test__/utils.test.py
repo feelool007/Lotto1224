@@ -1,6 +1,6 @@
 import unittest
 
-from utils import oddAndEven, smallAndLarge
+from utils import oddAndEven, smallAndLarge, parseInt
 
 class TestOddAndEven(unittest.TestCase):
 
@@ -47,6 +47,20 @@ class TestSmallAndLarge(unittest.TestCase):
             "19", "20", "21", "22", "23", "24"
         ])
         self.assertEqual(result, "0小12大")
+
+class TestParseInt(unittest.TestCase):
+
+    def test_123(self):
+        result = parseInt("1,23")
+        self.assertEqual(result, 123)
+
+    def test_4567(self):
+        result = parseInt("45.67")
+        self.assertEqual(result, 4567)
+
+    def test_no_digit(self):
+        result = parseInt("no digit")
+        self.assertEqual(result, 0)
 
 if __name__ == '__main__':
     unittest.main()

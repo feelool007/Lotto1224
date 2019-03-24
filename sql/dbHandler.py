@@ -20,7 +20,12 @@ createHistory = """
         n12 text,
         radno integer,
         date text,
-        count integer
+        firstPrize integer,
+        secondPrize integer,
+        thirdPrize integer,
+        forthPrize integer,
+        oddEven text,
+        smallLarge text
     )
 """
 
@@ -54,9 +59,13 @@ class DBHandler(object):
     def insert(self, data):
         query = """
             INSERT INTO history
-            (n01, n02, n03, n04, n05, n06, n07, n08, n09, n10, n11, n12, radno, date, count)
+            (
+                n01, n02, n03, n04, n05, n06, n07, n08, n09, n10, n11, n12,
+                radno, date, firstPrize, secondPrize, thirdPrize, forthPrize,
+                oddEven, smallLarge
+            )
             VALUES
-            (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         """
         self._cursor.execute(query, data)
         self._conn.commit()
