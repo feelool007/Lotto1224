@@ -1,6 +1,7 @@
 import wx
 
-from Pages import Today, History
+from Pages import TodayPage, HistoryPage
+
 
 class MainWindow(wx.Frame):
     def __init__(self, *args, **kwargs):
@@ -11,8 +12,8 @@ class MainWindow(wx.Frame):
     def setupUi(self):
         # Set pages
         self.nb = wx.Notebook(self)
-        todayPage = Today(self.nb)
-        historyPage = History(self.nb)
+        todayPage = TodayPage(self.nb)
+        historyPage = HistoryPage(self.nb)
         self.nb.AddPage(todayPage, "今日對獎")
         self.nb.AddPage(historyPage, "歷史資料")
 

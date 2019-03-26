@@ -2,18 +2,21 @@ import wx
 import wx.grid
 import pandas as pd
 
-from sql.dbHandler import DBHandler
+from Models import History, Session
 from Widgets import DeckInput
 from utils import analysis
 
-class History(wx.Panel):
+
+session = Session()
+
+class HistoryPage(wx.Panel):
     def __init__(self, parent):
-        super(History, self).__init__(parent)
+        super(HistoryPage, self).__init__(parent)
         self.headers = [
             "id", "數字01", "數字02", "數字03", "數字04", "數字05", "數字06",
             "數字07", "數字08", "數字09", "數字10", "數字11", "數字12", "期號",
-            "日期", "頭獎注數", "貳獎注數", "參獎注數", "肆獎注數", "單雙", "大小",
-            "對中數量"
+            "日期", "頭獎注數", "貳獎注數", "參獎注數", "肆獎注數", "銷售總數",
+            "單雙", "大小", "對中數量"
         ]
         self.tableCols = len(self.headers)
         self.tableRows = 0
@@ -26,9 +29,7 @@ class History(wx.Panel):
         self.setupUi()
 
     def getHistoyData(self):
-        db = DBHandler()
-        db.getAll()
-        self.history = pd.DataFrame.from_records(db.result)
+        self.history = pd.read_sql(session.query(History).statement, session.bind)
         self.history["對中數量"] = 0
         self.history.columns = self.headers
         # df.shape: (row, col)
@@ -72,9 +73,6 @@ class History(wx.Panel):
         # self.grid.SetSortingColumn(event.Col, self.sortAscending)
         self.sortAscending = not self.sortAscending
         self.sortIx = event.Col
-
-    def drawTable(self):
-        self.setValue()
 
     def setupUi(self):
         self.sizer = wx.BoxSizer(wx.VERTICAL)

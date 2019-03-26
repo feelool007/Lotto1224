@@ -1,2 +1,2 @@
-from .History import History
-from .Today import Today
+from .HistoryPage import HistoryPage
+from .TodayPage import TodayPage

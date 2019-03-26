@@ -1,30 +1,36 @@
 import wx
 
-from sql import DBHandler
+from Models import History, Session
 from dataParser import Parser
 from utils import analysis, oddAndEven, smallAndLarge
 from Widgets import DeckInput
 
-class Today(wx.Panel):
+
+session = Session()
+
+class TodayPage(wx.Panel):
     def __init__(self, parent):
-        super(Today, self).__init__(parent)
+        super(TodayPage, self).__init__(parent)
         self.deckInput = DeckInput(self)
         self.deck = self.deckInput.input.GetValue().split(",")
         self.setupUi()
 
-    def getNewest(self):
-        dbHandler = DBHandler()
-        self.result = dbHandler.getNewest()
+    def getNewest(self) -> History:
+        self.result = session.query(History).order_by(History.radno.desc()).first()
+        return self.result
 
     def fetchData(self):
-        dbHandler = DBHandler()
         parser = Parser()
 
-        radNo = dbHandler.getRecent()
-        if not radNo:
-            radNo = 107000001
-        else:
+        try:
+            radNo = session.query(History).order_by(History.radno.desc()).first().radno
             radNo += 1
+        except:
+            radNo = 107000001
+        # if not radNo:
+        #     radNo = 107000001
+        # else:
+        #     radNo += 1
         noResultCount = 0
         while True:
             result = parser.getResult(radNo)
@@ -37,26 +43,23 @@ class Today(wx.Panel):
                 continue
             else:
                 noResultCount = 0
-            oddEven = oddAndEven(result[:12])
-            smallLarge = smallAndLarge(result[:12])
-            result.append(oddEven)
-            result.append(smallLarge)
-            dbHandler.insert(result)
+            result.oddEven = oddAndEven(result())
+            result.smallLarge = smallAndLarge(result())
+            session.add(result)
+            session.commit()
             radNo += 1
 
     def showResult(self):
         self.deck = self.deckInput.input.GetValue().split(",")
-        dbHandler = DBHandler()
-        self.result = dbHandler.getNewest()
-        radNo = self.result[13]
-        date = self.result[14]
-        result = self.result[1:13]
-        count = analysis(result, self.deck)
+        result = self.getNewest()
+        radNo = result.radno
+        date = result.date
+        count = analysis(result(), self.deck)
         self.radNoText.SetLabel(str(radNo))
         self.dateText.SetLabel(str(date))
-        self.resultText.SetLabel(str(result))
-        self.oddEvenText.SetLabel(oddAndEven(result))
-        self.smallLargeText.SetLabel(smallAndLarge(result))
+        self.resultText.SetLabel(str(result()))
+        self.oddEvenText.SetLabel(oddAndEven(result()))
+        self.smallLargeText.SetLabel(smallAndLarge(result()))
         self.countText.SetLabel("中了%s個號碼！！" % count)
 
     def onGo(self, event):
