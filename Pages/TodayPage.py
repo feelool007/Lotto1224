@@ -23,14 +23,10 @@ class TodayPage(wx.Panel):
         parser = Parser()
 
         try:
-            radNo = session.query(History).order_by(History.radno.desc()).first().radno
+            radNo = self.getNewest().radno
             radNo += 1
         except:
             radNo = 107000001
-        # if not radNo:
-        #     radNo = 107000001
-        # else:
-        #     radNo += 1
         noResultCount = 0
         while True:
             result = parser.getResult(radNo)
@@ -57,7 +53,12 @@ class TodayPage(wx.Panel):
         count = analysis(result(), self.deck)
         self.radNoText.SetLabel(str(radNo))
         self.dateText.SetLabel(str(date))
-        self.resultText.SetLabel(str(result()))
+        for i, t in enumerate(result()):
+            self.resultText[i].SetLabel(t)
+            if t in self.deck:
+                self.resultText[i].SetForegroundColour("#00c853")
+            else:
+                self.resultText[i].SetForegroundColour("#000000")
         self.oddEvenText.SetLabel(oddAndEven(result()))
         self.smallLargeText.SetLabel(smallAndLarge(result()))
         self.countText.SetLabel("中了%s個號碼！！" % count)
@@ -79,8 +80,12 @@ class TodayPage(wx.Panel):
         hbox1.Add(self.dateText, 0, wx.EXPAND)
 
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
-        self.resultText = wx.StaticText(self, label="")
-        hbox2.Add(self.resultText, 0, wx.EXPAND)
+        self.resultText = [wx.StaticText(self, label="") for i in range(12)]
+        font = wx.Font(20, wx.ROMAN, wx.NORMAL, wx.NORMAL)
+        for t in self.resultText:
+            t.SetMinSize((25, -1))
+            t.SetFont(font)
+            hbox2.Add(t, 0, wx.EXPAND | wx.RIGHT, border=10)
 
         hbox3 = wx.BoxSizer(wx.HORIZONTAL)
         self.oddEvenText = wx.StaticText(self, label="")
