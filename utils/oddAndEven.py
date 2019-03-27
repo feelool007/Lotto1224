@@ -1,4 +1,4 @@
-def oddAndEven(deck: list):
+def oddAndEven(deck: list) -> str:
     countsOdd = 0
     countsEvent = 0
     for d in deck:

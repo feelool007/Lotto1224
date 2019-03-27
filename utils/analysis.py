@@ -1,4 +1,4 @@
-def analysis(result, deck):
+def analysis(result, deck) -> int:
     count = 0
     for number in deck:
         if number in result:

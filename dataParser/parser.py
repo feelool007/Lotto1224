@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from typing import Union
 
 from Models import History
 from utils import parseInt
@@ -26,7 +27,7 @@ class Parser(object):
         self._payload["__VIEWSTATEGENERATOR"] = __VIEWSTATEGENERATOR
         self._payload["__EVENTVALIDATION"] = __EVENTVALIDATION
 
-    def getResult(self, radNo):
+    def getResult(self, radNo) -> Union[History,bool]:
         result = History()
 
         self._payload["Lotto1224Control_history$txtNO"] = radNo
