@@ -10,6 +10,9 @@ class DeckInput(wx.Panel):
         super(DeckInput, self).__init__(parent)
         self.setupUi()
 
+    def getValue(self):
+        return self.input.GetValue().split(",")
+
     def setupUi(self):
         self.input = wx.TextCtrl(self)
         self.input.SetValue(",".join(DECK))

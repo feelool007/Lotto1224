@@ -22,14 +22,15 @@ class HistoryPage(wx.Panel):
         self.tableRows = 0
         self.history = pd.DataFrame([], columns=self.headers)
         self.deckInput = DeckInput(self)
-        self.deck = self.deckInput.input.GetValue().split(",")
+        self.deck = self.deckInput.getValue()
         self.sortAscending = False
         self.sortIx = -1
         self._table = -1
         self.setupUi()
 
     def getHistoyData(self):
-        self.history = pd.read_sql(session.query(History).statement, session.bind)
+        statement = session.query(History).order_by(History.date.desc()).statement
+        self.history = pd.read_sql(statement, session.bind)
         self.history["對中數量"] = 0
         self.history.columns = self.headers
         # df.shape: (row, col)
@@ -59,7 +60,7 @@ class HistoryPage(wx.Panel):
             self.grid.DeleteRows(numRows=self.tableRows)
         except:
             pass
-        self.deck = self.deckInput.input.GetValue().split(",")
+        self.deck = self.deckInput.getValue()
         self.getHistoyData()
         self.grid.AppendRows(numRows=self.tableRows)
         self.analysis()

@@ -12,7 +12,6 @@ class TodayPage(wx.Panel):
     def __init__(self, parent):
         super(TodayPage, self).__init__(parent)
         self.deckInput = DeckInput(self)
-        self.deck = self.deckInput.input.GetValue().split(",")
         self.setupUi()
 
     def getNewest(self) -> History:
@@ -46,7 +45,7 @@ class TodayPage(wx.Panel):
             radNo += 1
 
     def showResult(self):
-        self.deck = self.deckInput.input.GetValue().split(",")
+        self.deck = self.deckInput.getValue()
         result = self.getNewest()
         radNo = result.radno
         date = result.date
@@ -54,11 +53,11 @@ class TodayPage(wx.Panel):
         self.radNoText.SetLabel(str(radNo))
         self.dateText.SetLabel(str(date))
         for i, t in enumerate(result()):
-            self.resultText[i].SetLabel(t)
+            self.winningNumbers[i].SetLabel(t)
             if t in self.deck:
-                self.resultText[i].SetForegroundColour("#00c853")
+                self.winningNumbers[i].SetForegroundColour("#00c853")
             else:
-                self.resultText[i].SetForegroundColour("#000000")
+                self.winningNumbers[i].SetForegroundColour("#000000")
         self.oddEvenText.SetLabel(oddAndEven(result()))
         self.smallLargeText.SetLabel(smallAndLarge(result()))
         self.countText.SetLabel("中了%s個號碼！！" % count)
@@ -80,9 +79,9 @@ class TodayPage(wx.Panel):
         hbox1.Add(self.dateText, 0, wx.EXPAND)
 
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
-        self.resultText = [wx.StaticText(self, label="") for i in range(12)]
+        self.winningNumbers = [wx.StaticText(self, label="") for i in range(12)]
         font = wx.Font(20, wx.ROMAN, wx.NORMAL, wx.NORMAL)
-        for t in self.resultText:
+        for t in self.winningNumbers:
             t.SetMinSize((25, -1))
             t.SetFont(font)
             hbox2.Add(t, 0, wx.EXPAND | wx.RIGHT, border=10)
