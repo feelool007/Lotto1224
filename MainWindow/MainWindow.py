@@ -1,6 +1,6 @@
 import wx
 
-from Pages import TodayPage, HistoryPage
+from Pages import TodayPage, HistoryPage, StatisticsPage
 
 
 class MainWindow(wx.Frame):
@@ -14,8 +14,10 @@ class MainWindow(wx.Frame):
         self.nb = wx.Notebook(self)
         todayPage = TodayPage(self.nb)
         historyPage = HistoryPage(self.nb)
+        statisticsPage = StatisticsPage(self.nb)
         self.nb.AddPage(todayPage, "今日對獎")
         self.nb.AddPage(historyPage, "歷史資料")
+        self.nb.AddPage(statisticsPage, "統計分析")
 
         # 外觀設置
         self.SetSize((800, 600))

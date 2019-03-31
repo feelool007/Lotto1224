@@ -1,6 +1,6 @@
 import unittest
 
-from utils import oddAndEven, smallAndLarge, parseInt
+from utils import oddAndEven, smallAndLarge, parseInt, winNumCounter
 
 class TestOddAndEven(unittest.TestCase):
 
@@ -61,6 +61,25 @@ class TestParseInt(unittest.TestCase):
     def test_no_digit(self):
         result = parseInt("no digit")
         self.assertEqual(result, 0)
+
+class TestWinNumCounter(unittest.TestCase):
+    testData = [
+        ["01", "01", "01", "02", "03"],
+        ["02", "03", "03", "03", "04"]
+    ]
+
+    def test_should_return_dict(self):
+        result = winNumCounter(self.testData)
+        self.assertIsInstance(result, dict)
+
+    def test_should_return_correct_result(self):
+        result = winNumCounter(self.testData)
+        self.assertDictEqual(result, {
+            "01": 3,
+            "02": 2,
+            "03": 4,
+            "04": 1
+        })
 
 if __name__ == '__main__':
     unittest.main()
