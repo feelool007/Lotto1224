@@ -20,7 +20,7 @@ class MainWindow(wx.Frame):
         self.nb.AddPage(statisticsPage, "統計分析")
 
         # 外觀設置
-        self.SetSize((800, 600))
+        self.SetSize((1000, 600))
         self.SetTitle("Lotto1224")
         self.Centre()
 
