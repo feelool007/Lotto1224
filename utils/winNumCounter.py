@@ -1,4 +1,4 @@
-def winNumCounter(results):
+def winNumCounter(results) -> dict:
     t = dict()
     for r in results:
         for n in r:
