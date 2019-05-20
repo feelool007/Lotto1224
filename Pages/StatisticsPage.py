@@ -14,10 +14,10 @@ class StatisticsPage(wx.Panel):
     def __init__(self, parent):
         super(StatisticsPage, self).__init__(parent)
         self._init = False
-        self.options = ["無排序", "遞增", "遞減"]
+        self.options = ["遞增", "遞減", "無排序"]
         self.setupUi()
         self.getData()
-        self.onSort()
+        self.sort()
         self.draw()
         self._init = True
 
@@ -27,13 +27,13 @@ class StatisticsPage(wx.Panel):
         self.rawData = history[["n01", "n02", "n03", "n04", "n05", "n06",
                                 "n07", "n08", "n09", "n10", "n11", "n12"]]
 
-    def onSort(self, e=None):
+    def sort(self):
         mode = self.radios.GetSelection()
         counts = [(k, v) for k, v in winNumCounter(self.rawData.values.tolist()).items()]
-        if mode == 1:
+        if mode == 0:
             # asc
             sortedCounts = sorted(counts, key=lambda x: x[1], reverse=False)
-        elif mode == 2:
+        elif mode == 1:
             # desc
             sortedCounts = sorted(counts, key=lambda x: x[1], reverse=True)
         else:
@@ -41,13 +41,10 @@ class StatisticsPage(wx.Panel):
             sortedCounts = sorted(counts, key=lambda x: int(x[0]))
         self.xTicks = [x[0] for x in sortedCounts]
         self.yData = [x[1] for x in sortedCounts]
-        # if self._init:
-        #     self.update()
 
     def draw(self):
-        self.plot.clear()
         self.x = [(x + 1) for x in range(24)]
-        maxY = (int(max(self.yData) / 50) + 1) * 50
+        maxY = (int(max(self.yData) / 50) + 2) * 50
         self.yTicks = [x for x in range(0, maxY + 1, 50)]
         self.plot.bar(x=self.x, height=self.yData, tick_label=self.xTicks,
                       align="center", width=0.6)
@@ -58,12 +55,13 @@ class StatisticsPage(wx.Panel):
         for rect, h in zip(rects, self.yData):
             self.plot.text(rect.get_x() + rect.get_width() / 2, h + 3, h,
                            ha="center", va="bottom", rotation="vertical")
-        self.canvas.draw( )
 
-    # def update(self):
-    #     # self.plot.set_xticks(self.xTicks)
-    #     self.plot.set_ydata(self.yData)
-    #     self.canvas.draw()
+    def onUpdate(self, e):
+        self.sort()
+        self.plot.clear()
+        self.draw()
+        # call canvas.draw() to refresh ui.
+        self.canvas.draw()
 
     def setupUi(self):
         self.sizer = wx.BoxSizer(wx.VERTICAL)
@@ -71,7 +69,7 @@ class StatisticsPage(wx.Panel):
         # widgets
         self.radios = wx.RadioBox(self, label="排序", majorDimension=1, choices=self.options,
                                   style=wx.RA_SPECIFY_ROWS)
-        self.radios.Bind(wx.EVT_RADIOBOX, self.onSort)
+        self.radios.Bind(wx.EVT_RADIOBOX, self.onUpdate)
         # figure
         self.figure = Figure()
         self.canvas = FigureCanvas(self, -1, self.figure)
